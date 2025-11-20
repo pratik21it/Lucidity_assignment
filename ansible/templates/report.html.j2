@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+  table { border-collapse: collapse; width: 100%; }
+  th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+  th { background-color: #f2f2f2; }
+  .alert { color: red; font-weight: bold; }
+</style>
+</head>
+<body>
+  <h2>Multi-Account Disk Utilization Report</h2>
+  <table>
+    <tr>
+      <th>Account ID</th>
+      <th>Region</th>
+      <th>Instance Name</th>
+      <th>IP Address</th>
+      <th>Disk Usage (%)</th>
+      <th>Status</th>
+    </tr>
+    {% for host in all_hosts %}
+    {% if hostvars[host].usage_pct is defined %}
+    <tr>
+      <td>{{ hostvars[host].account_id | default('Unknown') }}</td>
+      <td>{{ hostvars[host].region | default('Unknown') }}</td>
+      <td>{{ hostvars[host].instance_name }}</td>
+      <td>{{ hostvars[host].ansible_host | default(hostvars[host].private_ip_address) }}</td>
+      <td>{{ hostvars[host].usage_pct }}%</td>
+      <td>
+        {% if hostvars[host].usage_pct | int >= 80 %}
+          <span class="alert">CRITICAL</span>
+        {% else %}
+          <span style="color:green">OK</span>
+        {% endif %}
+      </td>
+    </tr>
+    {% endif %}
+    {% endfor %}
+  </table>
+</body>
+</html>

@@ -1,0 +1,14 @@
+# Ansible specific
+*.retry
+*.log
+inventory_aws_ec2.yml   # Keep your inventory private if it has account IDs
+ansible.cfg             # Optional: Ignore if it has custom paths
+
+# AWS specific
+*.pem
+*.ppk
+.aws/
+aws_keys.txt
+
+# Mac/System specific
+.DS_Store

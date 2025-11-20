@@ -1,0 +1,39 @@
+---
+- name: 1. Collect Disk Metrics
+  hosts: all
+  gather_facts: no 
+  become: yes     
+  vars:
+    disk_threshold: 80
+  
+  tasks:
+    - name: Check SSH Connectivity
+      wait_for_connection:
+        timeout: 60
+
+    - name: Get Disk Utilization (Root Partition)
+      shell: "df -h / --output=pcent | tail -1 | tr -d ' %'"
+      register: disk_usage_output
+      changed_when: false
+
+    - name: Store Data as Facts
+      set_fact:
+        usage_pct: "{{ disk_usage_output.stdout | int }}"
+        instance_name: "{{ tags.Name | default('Unnamed') }}"
+        region: "{{ placement.region }}"
+        account_id: "{{ owner_id | default('Unknown') }}"
+        display_ip: "{{ private_ip_address }}"
+
+- name: 2. Generate Consolidated Report
+  hosts: localhost
+  connection: local
+  gather_facts: no
+  
+  tasks:
+    - name: Render HTML Report
+      template:
+        src: templates/report.html.j2
+        dest: ./Disk_Utilization_Report.html
+      vars:
+        # Access variables from all hosts in the previous play
+        all_hosts: "{{ groups['all'] }}"
