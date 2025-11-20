@@ -17,25 +17,25 @@ This project implements a secure, multi-account monitoring framework using Ansib
 
 1. Centralized Access & Management 
 
-Static inventory files and shared private keys are avoided. Instead, AWS IAM Roles are used.
+    Static inventory files and shared private keys are avoided. Instead, AWS IAM Roles are used.
 
-A uniform role (CrossAccountMonitorRole) is deployed to all member accounts.
+    A uniform role (CrossAccountMonitorRole) is deployed to all member accounts.
 
-The Ansible Control Node assumes this role using AWS STS (Security Token Service) to execute commands.
+    The Ansible Control Node assumes this role using AWS STS (Security Token Service) to execute commands.
 
 2. Data Aggregation 
 
-Parallel Execution: Ansible collects disk metrics (df -h) from all instances simultaneously.
+    Parallel Execution: Ansible collects disk metrics (df -h) from all instances simultaneously.
 
-Reporting: A local task aggregates the "facts" gathered from all hosts and renders them into a color-coded HTML report using Jinja2, highlighting instances with usage >80%.
+    Reporting: A local task aggregates the "facts" gathered from all hosts and renders them into a color-coded HTML report using Jinja2, highlighting instances with usage >80%.
 
 3. Scalability 
 
-The solution is designed for rapid acquisition integration.
+    The solution is designed for rapid acquisition integration.
 
-Auto-Discovery: The aws_ec2 dynamic inventory plugin is used.
+    Auto-Discovery: The aws_ec2 dynamic inventory plugin is used.
 
-Future Proof: If a new company/account is acquired, the new Account ID can be simply added to the inventory config. No changes to the playbook code are required.
+    Future Proof: If a new company/account is acquired, the new Account ID can be simply added to the inventory config. No changes to the playbook code are required.
 
 ## Setup and Configuration
 
