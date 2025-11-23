@@ -61,62 +61,46 @@ The solution utilizes a **Hub-and-Spoke** security model:
 
 ## Implementation Guide (Step-by-Step)
 ### Step 1: IAM Security Setup
-To avoid using hardcoded AWS Access Keys/Secret Keys, we use IAM Roles.
+* To avoid using hardcoded AWS Access Keys/Secret Keys, we use IAM Roles.
 
-In Member Accounts (Targets):
+* In Member Accounts (Targets):
 
-Create a Role: CrossAccountMonitorRole.
+    1. Create a Role: CrossAccountMonitorRole.
 
-Trust Policy: Allow the Management Account ID to assume this role.
+    2. Trust Policy: Allow the Management Account ID to assume this role.
 
-Permissions: AmazonEC2ReadOnlyAccess.
+    3. Permissions: AmazonEC2ReadOnlyAccess.
 
-In Management Account (Hub):
+* In Management Account (Hub):
 
-Create a Role: AnsibleControllerRole.
+    1. Create a Role: AnsibleControllerRole.
 
-Permissions: Allow sts:AssumeRole on the Member Account roles.
+    2. Permissions: Allow sts:AssumeRole on the Member Account roles.
 
-Attach this role to the EC2 instance running Ansible.
+    3. Attach this role to the EC2 instance running Ansible.
 
 ### Step 2: Secure Key Management
-Since different accounts/regions use different SSH keys, we created a centralized, secured key store.
+* Since different accounts/regions use different SSH keys, we created a centralized, secured key store.
 
-Created a directory: /home/ec2-user/keys/.
+* Created a directory: /home/ec2-user/keys/.
 
-Uploaded all necessary .pem files (prat-ansible.pem, target1.pem) to this directory.
+* Uploaded all necessary .pem files (prat-ansible.pem, target1.pem) to this directory.
 
-Secured the directory:
-
-Bash
+* Secured the directory:
 
 sudo chown -R ec2-user:ec2-user /home/ec2-user/keys/
 chmod 400 /home/ec2-user/keys/*.pem
-### Step 3: Directory Structure & Inventory
-We use the "Directory as Inventory" approach. Ansible reads every YAML file in the inventory/ folder and merges them.
 
-Plaintext
-
-.
-├── ansible.cfg            # Global Config
-├── playbook.yml           # Automation Logic
-├── keys/                  # (Gitignored) Contains .pem files
-├── templates/
-│   └── report.html.j2     # HTML Report Template
-└── inventory/
-    ├── 01_master.aws_ec2.yml    # Config for Management Account
-    └── 02_member.aws_ec2.yml    # Config for Member Accounts
-### Step 4: Dynamic Key Mapping (Crucial Configuration)
+### Step 3: Dynamic Key Mapping (Crucial Configuration)
 To solve the "Permission Denied" issues caused by mismatched keys, we implemented a dynamic Jinja2 expression in the inventory compose section.
 
 Code Snippet from inventory/01_master.aws_ec2.yml:
-
-YAML
 
 compose:
   ansible_host: public_ip_address
   # Automatically picks the key file that matches the AWS Key Pair Name
   ansible_ssh_private_key_file: "'/home/ec2-user/keys/' + key_name + '.pem'"
+
 This ensures that if an instance uses target1 key, Ansible automatically looks for /home/ec2-user/keys/target1.pem.
 
 ## Usage
@@ -129,9 +113,9 @@ This ensures that if an instance uses target1 key, Ansible automatically looks f
 
 ### Running the Solution
 Run the playbook using the ec2-user. Do not pass a private key flag; the inventory handles it automatically.
-Command for running the playbook: 
 
-ansible-playbook -i inventory/ playbook.yml -u ec2-user
+Command for running the playbook: 
+    ansible-playbook -i inventory/ playbook.yml -u ec2-user
 
 ### Results
 * Ansible scans all accounts.
