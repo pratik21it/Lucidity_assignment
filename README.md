@@ -23,7 +23,7 @@ The solution utilizes a **Hub-and-Spoke** security model:
     1.  **Discovery Layer:** Uses **IAM Roles** (No long-lived Access Keys) to query the AWS API.
     2.  **Connection Layer:** Uses **SSH Keys** (stored securely) to connect to instances.
 
-<img width="6318" height="1178" alt="Untitled diagram-2025-11-23-170622" src="https://github.com/user-attachments/assets/076c7a48-2a26-45e2-a69c-788847aeaa43" />
+<img width="8496" height="1178" alt="Untitled diagram-2025-11-23-182035" src="https://github.com/user-attachments/assets/4fac2722-c924-42d4-a3c4-8cedb7aaeb64" />
 
 
 ## Key Components
