@@ -78,6 +78,7 @@ The solution utilizes a **Hub-and-Spoke** security model:
     2. Permissions: Allow sts:AssumeRole on the Member Account roles.
 
     3. Attach this role to the EC2 instance running Ansible.
+    4. Permissions: AmazonEC2ReadOnlyAccess.
 
 ### Step 2: Secure Key Management
 * Since different accounts/regions use different SSH keys, we created a centralized, secured key store.
