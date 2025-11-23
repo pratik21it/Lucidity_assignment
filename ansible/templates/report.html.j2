@@ -25,7 +25,7 @@
       <td>{{ hostvars[host].account_id | default('Unknown') }}</td>
       <td>{{ hostvars[host].region | default('Unknown') }}</td>
       <td>{{ hostvars[host].instance_name }}</td>
-      <td>{{ hostvars[host].ansible_host | default(hostvars[host].private_ip_address) }}</td>
+      <td>{{ hostvars[host].display_ip | default(hostvars[host].private_ip_address) }}</td>
       <td>{{ hostvars[host].usage_pct }}%</td>
       <td>
         {% if hostvars[host].usage_pct | int >= 80 %}
